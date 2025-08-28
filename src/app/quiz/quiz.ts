@@ -26,20 +26,27 @@ export class QuizComponent implements OnInit {
   }
 
 submitQuiz(form: any): void {
+  // 🔹 First calculate skipped count
+  let skipped = 0;
+  this.quiz.forEach((q, i) => {
+    const selected = form.value['question' + i];
+    if (!selected) skipped++;
+  });
 
+  // 🔹 Ask confirmation before submitting
   Swal.fire({
     title: 'Are you sure?',
-    text: "Do you want to submit the quiz?",
+    text: `Do you want to submit the quiz? You have ${skipped} unanswered question(s).`,
     icon: 'question',
     showCancelButton: true,
     confirmButtonText: 'Yes, Submit',
     cancelButtonText: 'No, Continue',
   }).then((result) => {
     if (result.isConfirmed) {
-
       this.score.set(0);
-      let skipped = 0;
 
+      // Re-check skipped & calculate score properly
+      skipped = 0;
       this.quiz.forEach((q, i) => {
         const selected = form.value['question' + i];
         this.userAnswers[i] = selected || '';
@@ -52,6 +59,7 @@ submitQuiz(form: any): void {
 
       this.isFinished.set(true);
 
+      // Final SweetAlert with results
       Swal.fire({
         icon: skipped > 0 ? 'warning' : 'success',
         title: 'Quiz Submitted!',
@@ -63,6 +71,7 @@ submitQuiz(form: any): void {
     }
   });
 }
+
   restartQuiz(): void {
     this.isFinished.set(false);
     this.score.set(0);
