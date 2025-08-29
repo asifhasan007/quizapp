@@ -20,10 +20,11 @@ export class QuizComponent implements OnInit {
 
   constructor(private quizService: QuizService) {}
 
-  ngOnInit(): void {
-    this.quiz = this.quizService.getQuiz();
-    this.userAnswers = Array(this.quiz.length).fill('');
-  }
+ ngOnInit() {
+  this.quizService.getQuiz().subscribe(data => {
+    this.quiz = data;
+  });
+}
 
 submitQuiz(form: any): void {
   // 🔹 First calculate skipped count
